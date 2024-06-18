@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { StyleSheet, ToastAndroid, View, BackHandler, Alert, Platform, Text } from 'react-native';
 import { WebView } from 'react-native-webview';
+import RetryConnectionButton from './src/components/RetryConnectionButton'; // Adjust path as necessary
 
 const App = () => {
   const webviewRef = useRef(null);
@@ -44,32 +45,26 @@ const App = () => {
     setCanGoBack(navState.canGoBack);
   };
 
-  const handleError = (syntheticEvent) => {
-    const { nativeEvent } = syntheticEvent;
-    setError(nativeEvent);
-  };
-
-  const reloadWebView = () => {
-    setError(null);
-    webviewRef.current.reload();
-  };
-
   return (
     <View style={styles.container}>
-      {error ? (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Failed to load the page</Text>
-          <Text style={styles.errorText}>{error.description}</Text>
-          <Text style={styles.retryText} onPress={reloadWebView}>Tap to retry</Text>
-        </View>
-      ) : (
-        <WebView
-          ref={webviewRef}
-          source={{ uri: 'https://www.doctoroncall.com/' }}
-          style={styles.webview}
-          userAgent="Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Mobile Safari/537.36"
-          onNavigationStateChange={handleNavigationStateChange}
-          onError={handleError}
+      <WebView
+        ref={webviewRef}
+        source={{ uri: 'https://www.doctoroncall.com/' }}
+        style={styles.webview}
+        userAgent="Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Mobile Safari/537.36"
+        onNavigationStateChange={handleNavigationStateChange}
+        onError={(syntheticEvent) => setError(syntheticEvent.nativeEvent)}
+      />
+      {error && (
+        <RetryConnectionButton
+          onRetry={async () => {
+            try {
+              setError(null);
+              await webviewRef.current.reload();
+            } catch (err) {
+              setError(err);
+            }
+          }}
         />
       )}
     </View>
@@ -82,20 +77,6 @@ const styles = StyleSheet.create({
   },
   webview: {
     flex: 1,
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  errorText: {
-    fontSize: 18,
-    color: 'red',
-  },
-  retryText: {
-    fontSize: 16,
-    color: 'blue',
-    marginTop: 10,
   },
 });
 
