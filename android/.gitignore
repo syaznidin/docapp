@@ -1,0 +1,2 @@
+# .gitignore file inside the android directory
+/keystore.properties
