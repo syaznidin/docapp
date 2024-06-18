@@ -90,10 +90,10 @@ android {
             keyPassword 'android'
         }
         release {
-            keyAlias 'syazni'
-            keyPassword '123456'
-            storeFile file('release.keystore')
-            storePassword '123456'
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
         }
     }
     buildTypes {
