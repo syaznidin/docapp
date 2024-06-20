@@ -4,8 +4,10 @@
 
 ## Cloning the repository
 
+Use this command to clone the repository into your local machines.
+
 ```bash
-git clone
+git clone https://github.com/syaznidin/docapp.git
 ```
 
 ## Installing dependencies
